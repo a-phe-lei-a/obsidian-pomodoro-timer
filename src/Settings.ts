@@ -32,6 +32,8 @@ export interface Settings {
     useSystemNotification: boolean
     taskFormat: TaskFormat
     lowFps: boolean
+    longBreakLen: number        // Duration of long break in minutes
+    longBreakInterval: number   // Number of work cycles before a long break
 }
 
 export default class PomodoroSettings extends PluginSettingTab {
@@ -53,6 +55,8 @@ export default class PomodoroSettings extends PluginSettingTab {
         useSystemNotification: false,
         taskFormat: 'TASKS',
         lowFps: false,
+        longBreakLen: 15,
+        longBreakInterval: 4,
     }
 
     static settings: Writable<Settings> = writable(
@@ -111,15 +115,15 @@ export default class PomodoroSettings extends PluginSettingTab {
                 })
             })
 
-		new Setting(containerEl)
-			.setName('Low Animation FPS')
-			.setDesc("If you encounter high CPU usage, you can enable this option to lower the animation FPS to save CPU resources")
-			.addToggle((toggle) => {
-				toggle.setValue(this._settings.lowFps)
-				toggle.onChange((value: boolean) => {
-					this.updateSettings({ lowFps: value })
-				})
-			})
+        new Setting(containerEl)
+            .setName('Low Animation FPS')
+            .setDesc("If you encounter high CPU usage, you can enable this option to lower the animation FPS to save CPU resources")
+            .addToggle((toggle) => {
+                toggle.setValue(this._settings.lowFps)
+                toggle.onChange((value: boolean) => {
+                    this.updateSettings({ lowFps: value })
+                })
+            })
 
         new Setting(containerEl).setHeading().setName('Notification')
 
@@ -255,8 +259,8 @@ export default class PomodoroSettings extends PluginSettingTab {
                 example = `- 🍅 (pomodoro::WORK) (duration:: 25m) (begin:: ${moment()
                     .subtract(25, 'minutes')
                     .format('YYYY-MM-DD HH:mm')}) - (end:: ${moment().format(
-                    'YYYY-MM-DD HH:mm',
-                )})`
+                        'YYYY-MM-DD HH:mm',
+                    )})`
             }
             new Setting(containerEl)
                 .setName('Log Format')

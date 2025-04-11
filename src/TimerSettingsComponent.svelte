@@ -24,12 +24,36 @@ const updateBreakLen = (e: Event) => {
         return s
     })
 }
+
+const updateLongBreakLen = (e: Event) => {
+    const target = e.target as HTMLInputElement
+    const value = parseInt(target.value)
+    settings.update((s) => {
+        if (value >= 0) {
+            s.longBreakLen = value
+        }
+        target.value = s.longBreakLen.toString()
+        return s
+    })
+}
+
+const updateLongBreakInterval = (e: Event) => {
+    const target = e.target as HTMLInputElement
+    const value = parseInt(target.value)
+    settings.update((s) => {
+        if (value >= 0) {
+            s.longBreakInterval = value
+        }
+        target.value = s.longBreakInterval.toString()
+        return s
+    })
+}
 </script>
 
 <div class="pomodoro-settings-wrapper">
     <div class="pomodoro-settings-list">
         <div class="pomodoro-settings-item">
-            <div class="pomodoro-settings-label">Work</div>
+            <div class="pomodoro-settings-label">Work (min)</div>
             <div class="pomodoro-settings-control">
                 <input
                     value={$settings.workLen}
@@ -40,11 +64,33 @@ const updateBreakLen = (e: Event) => {
             </div>
         </div>
         <div class="pomodoro-settings-item">
-            <div class="pomodoro-settings-label">Break</div>
+            <div class="pomodoro-settings-label">Break (min)</div>
             <div class="pomodoro-settings-control">
                 <input
                     value={$settings.breakLen}
                     on:change={updateBreakLen}
+                    min="0"
+                    type="number"
+                />
+            </div>
+        </div>
+        <div class="pomodoro-settings-item">
+            <div class="pomodoro-settings-label">Long Break (min)</div>
+            <div class="pomodoro-settings-control">
+                <input
+                    value={$settings.longBreakLen}
+                    on:change={updateLongBreakLen}
+                    min="0"
+                    type="number"
+                />
+            </div>
+        </div>
+        <div class="pomodoro-settings-item">
+            <div class="pomodoro-settings-label">Cycles Before Long Break</div>
+            <div class="pomodoro-settings-control">
+                <input
+                    value={$settings.longBreakInterval}
+                    on:change={updateLongBreakInterval}
                     min="0"
                     type="number"
                 />

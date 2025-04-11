@@ -49,7 +49,7 @@ export default class Logger {
     public async log(ctx: LogContext): Promise<TFile | void> {
         const logFile = await this.resolveLogFile(ctx)
         const log = this.createLog(ctx)
-        if (logFile) {
+        if (logFile && log) {
             const logText = await this.toText(log, logFile)
             if (logText) {
                 await this.plugin.app.vault.append(logFile, `\n${logText}`)
@@ -115,7 +115,18 @@ export default class Logger {
         }
     }
 
-    private createLog(ctx: LogContext): TimerLog {
+    private createLog(ctx: LogContext): TimerLog | null {
+        // Handle the case where we need to determine if we should log
+        // based on the mode (now including LONG_BREAK)
+        const { logLevel } = this.plugin.getSettings()
+
+        if (
+            (logLevel === 'WORK' && ctx.mode !== 'WORK') ||
+            (logLevel === 'BREAK' && ctx.mode === 'WORK')
+        ) {
+            return null
+        }
+
         return {
             mode: ctx.mode,
             duration: Math.floor(ctx.elapsed / 60000),
@@ -155,18 +166,28 @@ export default class Logger {
             let begin = moment(log.begin)
             let end = moment(log.end)
             if (settings.logFormat === 'SIMPLE') {
+                let emoji =
+                    log.mode == 'WORK'
+                        ? '🍅'
+                        : log.mode == 'LONG_BREAK'
+                            ? '☕'
+                            : '🥤'
                 return `**${log.mode}(${log.duration}m)**: ${begin.format(
                     'HH:mm',
                 )} - ${end.format('HH:mm')}`
             }
 
             if (settings.logFormat === 'VERBOSE') {
-                const emoji = log.mode == 'WORK' ? '🍅' : '🥤'
-                return `- ${emoji} (pomodoro::${log.mode}) (duration:: ${
-                    log.duration
-                }m) (begin:: ${begin.format(
-                    'YYYY-MM-DD HH:mm',
-                )}) - (end:: ${end.format('YYYY-MM-DD HH:mm')})`
+                let emoji =
+                    log.mode == 'WORK'
+                        ? '🍅'
+                        : log.mode == 'LONG_BREAK'
+                            ? '☕'
+                            : '🥤'
+                return `- ${emoji} (pomodoro::${log.mode}) (duration:: ${log.duration
+                    }m) (begin:: ${begin.format(
+                        'YYYY-MM-DD HH:mm',
+                    )}) - (end:: ${end.format('YYYY-MM-DD HH:mm')})`
             }
 
             return ''
