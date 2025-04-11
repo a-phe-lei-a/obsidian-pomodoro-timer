@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-pomodoro-timer",
-	"version": "1.2.3",
+	"version": "1.2.0",
 	"description": "A pomodoro timer that helps manage your daily focus",
 	"main": "main.js",
 	"scripts": {
@@ -22,7 +22,7 @@
 		"@typescript-eslint/eslint-plugin": "5.29.0",
 		"@typescript-eslint/parser": "5.29.0",
 		"builtin-modules": "3.3.0",
-		"esbuild": "0.17.3",
+		"esbuild": "^0.25.2",
 		"esbuild-svelte": "^0.8.0",
 		"find-cache-dir": "^5.0.0",
 		"obsidian": "latest",
