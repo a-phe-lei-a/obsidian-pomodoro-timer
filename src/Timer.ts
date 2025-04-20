@@ -300,12 +300,14 @@ export default class Timer implements Readable<TimerStore> {
     public reset() {
         this.update((state) => {
             if (state.elapsed > 0) {
+                // Log the unfinished session if needed, but don't notify
                 this.logger.log(this.createLogContext(state))
             }
 
-            state.duration =
-                state.mode == 'WORK' ? state.workLen :
-                    state.mode == 'LONG_BREAK' ? state.longBreakLen : state.breakLen
+            // Reset to initial state
+            state.mode = 'WORK'
+            state.completedCycles = 0
+            state.duration = state.workLen // Reset duration to work length
             state.count = state.duration * 60 * 1000
             state.inSession = false
             state.running = false
